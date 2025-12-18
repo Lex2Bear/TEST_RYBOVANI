@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Google (DEMO)</title>
+
+  <style>
+    :root{
+      --text:#202124;
+      --muted:#5f6368;
+      --border:#dfe1e5;
+      --border2:#dadce0;
+      --bg:#fff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      color:var(--text);
+      background:var(--bg);
+    }
+
+    /* top right */
+    .topbar{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      gap:14px;
+      padding:14px 18px;
+      font-size:13px;
+    }
+    .topbar a{
+      color:var(--text);
+      text-decoration:none;
+    }
+    .topbar a:hover{text-decoration:underline}
+    .pill{
+      border:1px solid var(--border2);
+      padding:7px 10px;
+      border-radius:18px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    /* center layout */
+    .wrap{
+      min-height:calc(100vh - 48px);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:20px 16px 80px;
+    }
+
+    /* Google-ish logo */
+    .logo{
+      font-size:88px;
+      line-height:1;
+      font-weight:700;
+      letter-spacing:-2px;
+      margin:10px 0 24px;
+      user-select:none;
+    }
+    .logo span:nth-child(1){color:#4285F4}
+    .logo span:nth-child(2){color:#EA4335}
+    .logo span:nth-child(3){color:#FBBC05}
+    .logo span:nth-child(4){color:#4285F4}
+    .logo span:nth-child(5){color:#34A853}
+    .logo span:nth-child(6){color:#EA4335}
+
+    /* search box */
+    .search{
+      width:min(584px, 92vw);
+      border:1px solid var(--border);
+      border-radius:24px;
+      display:flex;
+      align-items:center;
+      padding:10px 14px;
+      gap:10px;
+      transition: box-shadow .15s ease, border-color .15s ease;
+      background:#fff;
+    }
+    .search:hover, .search:focus-within{
+      box-shadow:0 1px 6px rgba(32,33,36,.28);
+      border-color:transparent;
+    }
+    .icon{
+      width:18px;height:18px;flex:0 0 18px;
+      color:#9aa0a6;
+    }
+    input{
+      border:0;
+      outline:none;
+      font-size:16px;
+      width:100%;
+    }
+    .btnrow{
+      margin-top:26px;
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    button{
+      background:#f8f9fa;
+      border:1px solid #f8f9fa;
+      color:#3c4043;
+      padding:10px 16px;
+      border-radius:4px;
+      font-size:14px;
+      cursor:pointer;
+    }
+    button:hover{
+      border:1px solid #dadce0;
+      box-shadow:0 1px 1px rgba(0,0,0,.1);
+    }
+
+    /* small notice to keep it ethical */
+    .notice{
+      width:min(584px, 92vw);
+      margin-top:14px;
+      font-size:12px;
+      color:var(--muted);
+      text-align:center;
+    }
+    .notice strong{color:var(--text)}
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <a href="#" onclick="return false;">Gmail</a>
+    <a href="#" onclick="return false;">Obrázky</a>
+    <span class="pill">DEMO / školní projekt</span>
+  </div>
+
+  <main class="wrap">
+    <div class="logo" aria-label="Google">
+      <span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span>
+    </div>
+
+    <form id="f" class="search" autocomplete="off">
+      <!-- magnifier -->
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20l-5.99-6zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+      </svg>
+
+      <input id="q" name="q" type="text" placeholder="Hledat na Googlu nebo zadat URL" autofocus />
+
+      <!-- mic icon (decorative) -->
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/>
+      </svg>
+    </form>
+
+    <div class="btnrow">
+      <button type="submit" form="f">Hledat Google</button>
+      <button type="button" id="lucky">Zkusím štěstí</button>
+    </div>
+
+    <div class="notice">
+      <strong>Poznámka:</strong> Tohle je jen vizuální kopie pro výuku. Nejde o google.com a nic se neukládá.
+    </div>
+  </main>
+
+  <script>
+    const f = document.getElementById('f');
+    const q = document.getElementById('q');
+    const lucky = document.getElementById('lucky');
+
+    function go(mode){
+      const term = (q.value || "").trim();
+      if(!term) return;
+      // Real search redirect (no data collection here besides standard browser request)
+      const base = mode === "lucky"
+        ? "https://www.google.com/search?btnI=1&q="
+        : "https://www.google.com/search?q=";
+      window.location.href = base + encodeURIComponent(term);
+    }
+
+    f.addEventListener('submit', (e) => { e.preventDefault(); go("search"); });
+    lucky.addEventListener('click', () => go("lucky"));
+  </script>
+</body>
+</html>
