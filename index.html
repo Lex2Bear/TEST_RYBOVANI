@@ -21,7 +21,6 @@
       background:var(--bg);
     }
 
-    /* top right */
     .topbar{
       display:flex;
       justify-content:flex-end;
@@ -41,9 +40,9 @@
       border-radius:18px;
       color:var(--muted);
       font-size:12px;
+      user-select:none;
     }
 
-    /* center layout */
     .wrap{
       min-height:calc(100vh - 48px);
       display:flex;
@@ -53,7 +52,6 @@
       padding:20px 16px 80px;
     }
 
-    /* Google-ish logo */
     .logo{
       font-size:88px;
       line-height:1;
@@ -69,7 +67,6 @@
     .logo span:nth-child(5){color:#34A853}
     .logo span:nth-child(6){color:#EA4335}
 
-    /* search box */
     .search{
       width:min(584px, 92vw);
       border:1px solid var(--border);
@@ -95,6 +92,7 @@
       font-size:16px;
       width:100%;
     }
+
     .btnrow{
       margin-top:26px;
       display:flex;
@@ -116,7 +114,6 @@
       box-shadow:0 1px 1px rgba(0,0,0,.1);
     }
 
-    /* small notice to keep it ethical */
     .notice{
       width:min(584px, 92vw);
       margin-top:14px;
@@ -141,14 +138,14 @@
     </div>
 
     <form id="f" class="search" autocomplete="off">
-      <!-- magnifier -->
+      <!-- lupa -->
       <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
         <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20l-5.99-6zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
       </svg>
 
       <input id="q" name="q" type="text" placeholder="Hledat na Googlu nebo zadat URL" autofocus />
 
-      <!-- mic icon (decorative) -->
+      <!-- mikrofon (dekorace) -->
       <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
         <path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/>
       </svg>
@@ -160,7 +157,8 @@
     </div>
 
     <div class="notice">
-      <strong>Poznámka:</strong> Tohle je jen vizuální kopie pro výuku. Nejde o google.com a nic se neukládá.
+      <strong>Poznámka:</strong> Tohle je jen vizuální kopie pro výuku. Nejde o google.com a nezpracovává se obsah dotazu.
+      Loguje se pouze <strong>počet slov</strong> a <strong>čas vyhledání</strong>.
     </div>
   </main>
 
@@ -169,18 +167,42 @@
     const q = document.getElementById('q');
     const lucky = document.getElementById('lucky');
 
-    function go(mode){
+    function logAndGo(mode){
       const term = (q.value || "").trim();
       if(!term) return;
-      // Real search redirect (no data collection here besides standard browser request)
+
+      // počet slov
+      const wordCount = term.split(/\s+/).filter(Boolean).length;
+
+      // čas vyhledání (lokální čas uživatele)
+      const time = new Date().toLocaleTimeString();
+
+      // jen demo log (žádný text dotazu!)
+      console.log("TEST LOG:", { wordCount, time });
+
+      // ukázat uživateli (ať ví, co se měří)
+      alert(
+        "TESTOVACÍ LOG (bez obsahu dotazu)\n" +
+        "Počet slov: " + wordCount + "\n" +
+        "Čas vyhledání: " + time
+      );
+
+      // normální vyhledání na Google
       const base = mode === "lucky"
         ? "https://www.google.com/search?btnI=1&q="
         : "https://www.google.com/search?q=";
+
       window.location.href = base + encodeURIComponent(term);
     }
 
-    f.addEventListener('submit', (e) => { e.preventDefault(); go("search"); });
-    lucky.addEventListener('click', () => go("lucky"));
+    f.addEventListener('submit', (e) => {
+      e.preventDefault();
+      logAndGo("search");
+    });
+
+    lucky.addEventListener('click', () => {
+      logAndGo("lucky");
+    });
   </script>
 </body>
 </html>
